@@ -57,12 +57,12 @@ function StaticDonut({
   )
 }
 
-interface ServiceStat  { service_type: string; count: number }
-interface MonthStat    { month: string; sessions: number }
-interface LangStat     { language: string; count: number }
-interface FollowupStat { urgency: string; pending: number; completed: number; total: number }
-interface RiskStat     { level: string; count: number; fill: string }
-interface EngageStat   { sessions: string; clients: number }
+interface ServiceStat  { service_type: string; count: number; [k: string]: unknown }
+interface MonthStat    { month: string; sessions: number; [k: string]: unknown }
+interface LangStat     { language: string; count: number; [k: string]: unknown }
+interface FollowupStat { urgency: string; pending: number; completed: number; total: number; [k: string]: unknown }
+interface RiskStat     { level: string; count: number; fill: string; [k: string]: unknown }
+interface EngageStat   { sessions: string; clients: number; [k: string]: unknown }
 
 type TemplateId = 'quarterly' | 'annual' | 'demographics' | 'services' | 'custom'
 
