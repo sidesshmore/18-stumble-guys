@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LogOut, User } from 'lucide-react'
+import { InstallBanner } from '@/components/pwa/InstallBanner'
+import { ServiceWorkerRegistrar } from '@/components/pwa/ServiceWorkerRegistrar'
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -77,6 +79,8 @@ export default async function PortalLayout({ children }: { children: React.React
       <footer className="py-4 text-center text-xs text-zinc-400 border-t">
         Powered by CaseTrack · {orgName}
       </footer>
+      <InstallBanner />
+      <ServiceWorkerRegistrar />
     </div>
   )
 }
