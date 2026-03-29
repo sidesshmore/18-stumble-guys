@@ -26,10 +26,17 @@ export async function POST(request: NextRequest) {
   const parsed = Schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', detail: parsed.error.flatten() }, { status: 400 })
 
-  const { org_id, user_id, title, body: msgBody, type, id } = parsed.data
+  const { org_id: rawOrgId, user_id, title, body: msgBody, type, id } = parsed.data
+
+  // Fall back to the caller's own org if no target provided
+  let org_id = rawOrgId
+  if (!org_id && !user_id) {
+    const { data: userData } = await supabase.from('users').select('org_id').eq('id', user.id).single()
+    org_id = userData?.org_id ?? null
+  }
 
   if (!org_id && !user_id) {
-    return NextResponse.json({ error: 'Provide org_id or user_id' }, { status: 400 })
+    return NextResponse.json({ error: 'Could not resolve org_id' }, { status: 400 })
   }
 
   const sent = org_id
