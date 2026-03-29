@@ -1,13 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -55,7 +56,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.511 0.262 276.97); /* indigo-600 */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -127,4 +128,104 @@
   html {
     @apply font-sans;
   }
+}
+
+/* ── Microinteraction utilities ───────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-up   { animation: fade-up  0.25s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fade-in   { animation: fade-in  0.2s ease-out both; }
+.animate-scale-in  { animation: scale-in 0.2s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* Stagger children */
+.stagger > * { animation: fade-up 0.25s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger > *:nth-child(1) { animation-delay: 0ms;  }
+.stagger > *:nth-child(2) { animation-delay: 50ms; }
+.stagger > *:nth-child(3) { animation-delay: 100ms; }
+.stagger > *:nth-child(4) { animation-delay: 150ms; }
+.stagger > *:nth-child(5) { animation-delay: 200ms; }
+.stagger > *:nth-child(6) { animation-delay: 250ms; }
+
+/* Smooth interactive elements */
+a, button { transition-property: color, background-color, border-color, opacity, box-shadow, transform; transition-duration: 120ms; transition-timing-function: ease; }
+button:active:not(:disabled) { transform: scale(0.97); }
+
+/* Remove blue outline on non-focus-visible */
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── Print / PDF export ──────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 2cm 2.5cm; }
+
+  /* Hide entire UI, reveal only the report */
+  html, body { height: auto !important; overflow: visible !important; }
+  body * { visibility: hidden; }
+  #report-print-area,
+  #report-print-area * { visibility: visible; }
+
+  #report-print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.7;
+    color: #111;
+    background: #fff !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Charts — show in print, force two-column grid */
+  #report-print-area .print-charts {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 12pt;
+    margin-bottom: 18pt;
+    page-break-inside: avoid;
+  }
+  #report-print-area .print-charts > div {
+    background: #f9f9f9 !important;
+    border: 1px solid #e4e4e7 !important;
+    border-radius: 6pt;
+    padding: 10pt;
+  }
+  /* Recharts SVG — ensure it renders at full width */
+  #report-print-area .recharts-wrapper { width: 100% !important; }
+  #report-print-area .recharts-surface { overflow: visible !important; }
+
+  /* Typography */
+  #report-print-area h1 { font-size: 20pt; font-weight: 700; border-bottom: 2px solid #111; padding-bottom: 6pt; margin-bottom: 4pt; }
+  #report-print-area h2 { font-size: 13pt; font-weight: 700; margin-top: 18pt; margin-bottom: 6pt; color: #222; }
+  #report-print-area h3 { font-size: 11pt; font-weight: 700; margin-top: 12pt; }
+  #report-print-area p  { margin: 6pt 0; }
+  #report-print-area ul { padding-left: 18pt; margin: 6pt 0; }
+  #report-print-area li { margin: 3pt 0; }
+  #report-print-area strong { font-weight: 700; }
+  #report-print-area em    { font-style: italic; }
+
+  /* Tables */
+  #report-print-area table { width: 100%; border-collapse: collapse; margin: 10pt 0; font-size: 10pt; page-break-inside: avoid; }
+  #report-print-area th { background: #f4f4f5 !important; font-weight: 700; text-align: left; padding: 5pt 8pt; border: 1px solid #d4d4d8; }
+  #report-print-area td { padding: 4pt 8pt; border: 1px solid #e4e4e7; }
+  #report-print-area tr:nth-child(even) td { background: #fafafa !important; }
+
+  /* Footer */
+  #report-print-area .print-footer { margin-top: 36pt; padding-top: 8pt; border-top: 1px solid #ccc; font-size: 9pt; color: #666; text-align: center; font-family: Arial, sans-serif; }
 }
